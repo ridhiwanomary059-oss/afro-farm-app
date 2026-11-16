@@ -131,6 +131,37 @@ setTimeout(()=>{b.innerHTML+=`<div class=msg bot>${r}</div>`;b.scrollTop=b.scrol
 i.value='';b.scrollTop=b.scrollHeight;
 }
 init();
+  // --- ADD PAYMENTS + LANGUAGES ---
+let payDiv = document.createElement('div');
+payDiv.innerHTML = `
+<div style="margin:10px;background:white;border-radius:16px;padding:16px;border:2px solid #2e7d32">
+<h3>💳 Africa Payment - Lipa Hapa</h3>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
+<div style="border:2px solid #4caf50;border-radius:10px;padding:10px;text-align:center">📱 <b>M-Pesa</b><br><small>Vodacom</small></div>
+<div style="border:2px solid #4caf50;border-radius:10px;padding:10px;text-align:center">📱 <b>Tigo Pesa</b></div>
+<div style="border:2px solid #4caf50;border-radius:10px;padding:10px;text-align:center">📱 <b>Airtel Money</b></div>
+<div style="border:2px solid #4caf50;border-radius:10px;padding:10px;text-align:center">📱 <b>MTN MoMo</b></div>
+<div style="border:2px solid #4caf50;border-radius:10px;padding:10px;text-align:center">📱 <b>Orange Money</b></div>
+<div style="border:2px solid #4caf50;border-radius:10px;padding:10px;text-align:center">📱 <b>Wave + Visa + PayPal</b></div>
+</div>
+<button style="background:#4caf50;color:white;padding:12px;border:none;border-radius:10px;width:100%;margin-top:10px;font-weight:bold" onclick="alert('PRO Activated! $2 / TZS 5000 - Soon with Flutterwave!')">Activate PRO $2 / TZS 5,000</button>
+</div>
+<div style="margin:10px;background:white;border-radius:16px;padding:16px;border:2px solid #aed581">
+<h3>🗣️ Languages - Lugha Za Afrika</h3>
+<select style="padding:10px;border-radius:10px;width:100%;margin-top:8px;border:2px solid #4caf50;font-weight:bold">
+<option>🇬🇧 English</option>
+<option>🇹🇿 Kiswahili - Swahili</option>
+<option>🇪🇬 العربية - Arabic</option>
+<option>🇸🇳 Français - French</option>
+<option>🇲🇿 Português - Portuguese</option>
+<option>🇪🇹 አማርኛ - Amharic</option>
+<option>🇳🇬 Hausa</option>
+<option>🇳🇬 Yorùbá - Yoruba</option>
+<option>🇿🇦 Zulu</option>
+<option>🇷🇼 Kinyarwanda</option>
+</select>
+</div>`;
+document.body.insertBefore(payDiv, document.querySelector('script').nextSibling);
 </script>
 </body>
 </html>
