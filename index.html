@@ -31,9 +31,132 @@ body{background:#f0f5e0;color:#12210a;padding-bottom:70px}
 .subBox li{font-size:11px;margin:4px 0;list-style:none}
 input[type=text]{width:75%;padding:10px;border:1px solid #ddd;border-radius:8px} .sendBtn{width:22%;padding:10px;background:#1b4009;color:white;border:none;border-radius:8px;font-weight:bold}
 </style>
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Afro Farm App - 54 Countries</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto}
+body{background:#f1f8e9;color:#2e7d32;padding-bottom:80px}
+.header{background:linear-gradient(135deg,#2e7d32,#1b5e20);color:white;padding:14px;text-align:center;position:sticky;top:0;z-index:100}
+.header h1{font-size:20px}
+.header p{font-size:11px;opacity:0.9;margin-top:2px}
+.search-bar{margin:10px;background:white;border-radius:12px;padding:8px 12px;display:flex;align-items:center;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+.search-bar input{border:none;outline:none;flex:1;padding:8px;font-size:15px}
+.region-tabs{display:flex;gap:6px;overflow-x:auto;padding:10px;white-space:nowrap}
+.region-tabs button{border:2px solid #4caf50;background:white;color:#2e7d32;padding:8px 14px;border-radius:20px;font-weight:bold;font-size:13px;white-space:nowrap}
+.region-tabs button.active{background:#4caf50;color:white}
+.card{background:white;border-radius:16px;margin:10px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,0.08)}
+.country-grid{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.country-grid span{border:1.5px solid #aed581;padding:5px 10px;border-radius:8px;font-size:12px;background:#f9fbe7}
+.crop-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.crop{border:1px solid #e8f5e9;border-radius:12px;padding:10px;background:#fafffe}
+.crop b{font-size:14px}
+.crop small{font-size:11px;color:#555}
+.crop button{background:#4caf50;color:white;border:none;padding:8px;border-radius:8px;width:100%;margin-top:6px;font-weight:bold;font-size:12px}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:white;display:flex;justify-content:space-around;padding:8px 0;border-top:1px solid #ddd;z-index:200}
+.bottom-nav div{text-align:center;font-size:11px;color:#666}
+.bottom-nav div.active{color:#2e7d32;font-weight:bold}
+.settings-list div{padding:12px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center}
+.badge{background:#e8f5e9;color:#2e7d32;padding:3px 8px;border-radius:10px;font-size:11px}
+</style>
 </head>
 <body>
-<div class="header"><h1>🌍 AFRO FARM • </h1><p>54 Countries | AI Doctor | Mr Farm Trainer | Offline Ready</p></div>
+<div class="header">
+<h1>🌍 AFRO FARM</h1>
+<p>54 Countries | AI Doctor | Farm Trainer | Offline Ready</p>
+</div>
+<div class="search-bar">
+<span>🔍</span>
+<input type="text" id="searchInput" placeholder="Search crops, countries, diseases..." onkeyup="doSearch()">
+</div>
+<div class="region-tabs">
+<button class="active" onclick="showRegion('east')">East Africa</button>
+<button onclick="showRegion('west')">West Africa</button>
+<button onclick="showRegion('central')">Central Africa</button>
+<button onclick="showRegion('north')">North Africa</button>
+<button onclick="showRegion('south')">Southern Africa</button>
+<button onclick="showRegion('all')">All 54 Countries</button>
+</div>
+<div class="card">
+<h3>🌧️ Weather Info</h3>
+<p style="font-size:12px"><b>East:</b> 70-85% Long Mar-May, Short Nov-Dec<br><b>West:</b> 65% rain Apr-Oct<br><b>Central:</b> 90% Feb-Nov rainforest</p>
+</div>
+<div class="card" id="countriesCard">
+<h2>📍 East Africa - 14 Countries</h2>
+<div class="country-grid" id="countryList">
+<span>Tanzania</span><span>Kenya</span><span>Uganda</span><span>Rwanda</span><span>Burundi</span><span>Ethiopia</span><span>Eritrea</span><span>Somalia</span><span>Djibouti</span><span>South Sudan</span><span>Sudan</span><span>Comoros</span><span>Seychelles</span><span>Mauritius</span>
+</div>
+</div>
+<div class="card" id="allCountriesCard" style="display:none">
+<h2>🗺️ All 54 African Countries & Map</h2>
+<div style="background:#e8f5e9;padding:10px;border-radius:10px;text-align:center;margin:8px 0">
+<a href="https://www.google.com/maps/search/Africa+farming+map" target="_blank" style="color:#2e7d32;font-weight:bold;text-decoration:none">📍 Open Full Africa Map</a>
+</div>
+<div id="full54List" style="font-size:12px;line-height:1.8"></div>
+</div>
+<div class="crop-grid" id="cropGrid">
+<div class="crop"><b>🌿 Maize</b><br><small>Rain: Mar-May<br>Yield: 3T/ha</small><button onclick="alert('Maize Guide: 75x25cm, NPK, 90 days')">Learn Full Guide</button></div>
+<div class="crop"><b>🌿 Cassava</b><br><small>All year<br>Yield: 20T/ha</small><button onclick="alert('Cassava: 1m cuttings, 12 months')">Learn Full Guide</button></div>
+<div class="crop"><b>🌿 Rice Mwea/TZ</b><br><small>Irrigated Nov-Feb<br>6T/ha</small><button>Learn Full Guide</button></div>
+<div class="crop"><b>🌿 Beans</b><br><small>Short rain<br>1.5T/ha</small><button>Learn Full Guide</button></div>
+</div>
+<div class="card" style="border:2px solid #2e7d32">
+<h3>💳 Africa Payment - Lipa Hapa</h3>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
+<div style="border:2px solid #c8e6c9;border-radius:10px;padding:10px;text-align:center">📱 <b>M-Pesa</b><br><small>Vodacom/Safaricom</small></div>
+<div style="border:2px solid #c8e6c9;border-radius:10px;padding:10px;text-align:center">📱 <b>Tigo Pesa</b></div>
+<div style="border:2px solid #c8e6c9;border-radius:10px;padding:10px;text-align:center">📱 <b>Airtel Money</b></div>
+<div style="border:2px solid #c8e6c9;border-radius:10px;padding:10px;text-align:center">📱 <b>MTN MoMo</b></div>
+<div style="border:2px solid #c8e6c9;border-radius:10px;padding:10px;text-align:center">📱 <b>Orange Money</b></div>
+<div style="border:2px solid #c8e6c9;border-radius:10px;padding:10px;text-align:center">📱 <b>Wave + Visa + PayPal</b></div>
+</div>
+<button style="background:#4caf50;color:white;padding:12px;border:none;border-radius:10px;width:100%;margin-top:10px;font-weight:bold" onclick="alert('PRO Activated! $2 / TZS 5000')">Activate PRO $2 / TZS 5,000</button>
+</div>
+<div class="card" id="settingsCard">
+<h3>⚙️ Settings</h3>
+<div class="settings-list">
+<div><span>🗣️ Language</span><select style="padding:6px;border-radius:8px;border:1px solid #4caf50"><option>English</option><option>Kiswahili</option><option>العربية Arabic</option><option>Français</option><option>Português</option><option>Amharic</option><option>Hausa</option><option>Yoruba</option><option>Zulu</option><option>Kinyarwanda</option></select></div>
+<div><span>💱 Currency</span><span class="badge">TZS / USD Auto</span></div>
+<div><span>📴 Offline Mode</span><span class="badge">✅ Ready</span></div>
+<div><span>🔔 Alerts</span><span class="badge">ON</span></div>
+<div><span>📦 Version</span><span class="badge">V2.0 PRO - 54 Countries</span></div>
+</div>
+</div>
+<div class="card" id="helpCard">
+<h3>❓ Help & Contact Us</h3>
+<div style="font-size:13px;line-height:1.6;margin-top:8px">
+<b>📖 How to Use:</b><br>1. Choose region<br>2. Search crop/disease<br>3. Use AI Doctor<br>4. Mr Farm voice help<br><br>
+<b>📞 Contact:</b><br>📱 WhatsApp: +255 700 000 000<br>📧 Email: afrofarm54@gmail.com<br>📍 Mwanza, Tanzania - Africa HQ<br><br>
+<button style="background:#25D366;color:white;padding:10px;border:none;border-radius:10px;width:100%;font-weight:bold" onclick="window.open('https://wa.me/255700000000','_blank')">💬 Chat on WhatsApp</button>
+</div>
+</div>
+<div style="text-align:center;padding:20px;font-size:11px;color:#888">🌍 Afro Farm - Feeding Africa 2024-2026<br>Made with ❤️ in Mwanza, Tanzania</div>
+<div class="bottom-nav">
+<div class="active" onclick="showPage('map')"><div>🗺️</div>Map 54</div>
+<div onclick="showPage('learn')"><div>📚</div>Learn</div>
+<div onclick="showPage('doctor')"><div>🩺</div>AI Doctor</div>
+<div onclick="showPage('farm')"><div>🤖</div>Mr Farm</div>
+<div onclick="showPage('settings')"><div>⚙️</div>Setting</div>
+<div onclick="showPage('help')"><div>❓</div>Help</div>
+</div>
+<script>
+const countries54={east:["Tanzania","Kenya","Uganda","Rwanda","Burundi","Ethiopia","Eritrea","Somalia","Djibouti","South Sudan","Sudan","Comoros","Seychelles","Mauritius"],west:["Nigeria","Ghana","Senegal","Mali","Burkina Faso","Niger","Guinea","Benin","Sierra Leone","Liberia","Ivory Coast","Gambia","Guinea-Bissau","Cape Verde","Togo","Mauritania"],central:["Cameroon","DR Congo","Congo","CAR","Chad","Gabon","Equatorial Guinea","Sao Tome","Angola"],north:["Egypt","Libya","Tunisia","Algeria","Morocco","Western Sahara"],south:["South Africa","Botswana","Namibia","Zimbabwe","Zambia","Malawi","Mozambique","Lesotho","Eswatini","Madagascar"]};
+function showRegion(r){
+ const card=document.getElementById('countriesCard');const allCard=document.getElementById('allCountriesCard');
+ if(r==='all'){card.style.display='none';allCard.style.display='block';let all=[];Object.values(countries54).forEach(arr=>all=all.concat(arr));let html='<div class="country-grid">'+all.map(c=>`<span>${c}</span>`).join('')+'</div>';html+='<p style="margin-top:10px"><b>Total: 54 Countries</b> - Tap for map: ';html+=all.map(c=>`<a href="https://www.google.com/maps/search/${c}" target="_blank" style="color:#2e7d32">${c}</a>`).join(', ')+'</p>';document.getElementById('full54List').innerHTML=html;}
+ else{allCard.style.display='none';card.style.display='block';let list=countries54[r]||countries54.east;document.getElementById('countryList').innerHTML=list.map(c=>`<span>${c}</span>`).join('');document.querySelector('#countriesCard h2').innerText=`📍 ${r.charAt(0).toUpperCase()+r.slice(1)} Africa - ${list.length} Countries`;}
+}
+function doSearch(){let q=document.getElementById('searchInput').value.toLowerCase();let crops=document.querySelectorAll('.crop');crops.forEach(c=>{if(c.innerText.toLowerCase().includes(q))c.style.display='block';else c.style.display='none';});}
+function showPage(p){if(p==='settings')document.getElementById('settingsCard').scrollIntoView({behavior:'smooth'});if(p==='help')document.getElementById('helpCard').scrollIntoView({behavior:'smooth'});if(p==='map')window.scrollTo({top:0,behavior:'smooth'});if(p==='learn')document.getElementById('cropGrid').scrollIntoView({behavior:'smooth'});if(p==='doctor')alert('🩺 AI Doctor: Take photo of sick plant leaf!');if(p==='farm')alert('🤖 Mr Farm Trainer: Voice help in Swahili & English!');}
+</script>
+</body>
+</html>
+</head>
+<body>
+<div class="header"><h1>🌍 AFRO FARM  </h1><p>54 Countries | AI Doctor | Mr Farm Trainer | Offline Ready</p></div>
 
 <div class="weather" id="weatherBar"></div>
 
