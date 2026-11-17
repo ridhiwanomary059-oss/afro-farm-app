@@ -291,5 +291,86 @@ document.body.insertBefore(payDiv, document.querySelector('script').nextSibling)
 </script>
   <div id="loginModal" style="position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:1000"><div style="background:#fff;width:90%;max-width:360px;border-radius:18px;padding:20px"><h2 id="modalTitle" style="text-align:center">👤 Login</h2><div id="nameField" style="display:none"><input id="regName" placeholder="👤 Full Name" style="width:100%;padding:12px;margin:8px 0;border:1.5px solid #c8e6c9;border-radius:10px"></div><input id="regPhone" placeholder="📱 Phone / Email" style="width:100%;padding:12px;margin:8px 0;border:1.5px solid #c8e6c9;border-radius:10px"><input id="regPass" type="password" placeholder="🔒 Password min 4" style="width:100%;padding:12px;margin:8px 0;border:1.5px solid #c8e6c9;border-radius:10px"><button onclick="doAuth()" id="authBtn" style="width:100%;padding:12px;background:#4caf50;color:#fff;border:none;border-radius:10px;font-weight:bold">Login</button><div onclick="toggleAuth()" id="toggleLink" style="color:#2e7d32;text-align:center;margin-top:10px;font-size:13px;cursor:pointer">Don't have account? Create Free Account →</div><div onclick="document.getElementById('loginModal').style.display='none'" style="text-align:center;margin-top:10px;color:#999;font-size:13px">Close ✕</div><p id="authMsg" style="text-align:center;color:red;font-size:12px"></p></div></div>
 <script>let isReg=false;function toggleAuth(){isReg=!isReg;document.getElementById('modalTitle').innerText=isReg?'✨ Create Account':'👤 Login';document.getElementById('authBtn').innerText=isReg?'Create Account Free':'Login';document.getElementById('toggleLink').innerText=isReg?'Already have account? Login →':"Don't have account? Create Free Account →";document.getElementById('nameField').style.display=isReg?'block':'none'}function doAuth(){let n=document.getElementById('regName').value,p=document.getElementById('regPhone').value.trim(),pw=document.getElementById('regPass').value;if(!p||pw.length<4){document.getElementById('authMsg').innerText='Enter phone + password min 4';return}let u=JSON.parse(localStorage.getItem('afro_users')||'{}');if(isReg){if(!n){document.getElementById('authMsg').innerText='Enter your name';return}if(u[p]){document.getElementById('authMsg').innerText='Account exists! Please Login';return}u[p]={name:n,pass:pw};localStorage.setItem('afro_users',JSON.stringify(u));localStorage.setItem('afro_current',JSON.stringify({name:n,phone:p}));alert('🎉 Welcome '+n+'! Account Created!')}else{if(!u[p]||u[p].pass!==pw){document.getElementById('authMsg').innerText='Wrong phone or password!';return}localStorage.setItem('afro_current',JSON.stringify({name:u[p].name,phone:p}));alert('Welcome back '+u[p].name+'!')}document.getElementById('loginModal').style.display='none';let cur=JSON.parse(localStorage.getItem('afro_current'));if(cur)document.getElementById('drawerUser').innerText=cur.name+' • '+cur.phone}</script>
+<!-- AI DOCTOR CHAT + VOICE -->
+<div id="aiDoctorBtn" onclick="openAIDoctor()" style="position:fixed;bottom:20px;right:20px;background:#16a34a;color:white;padding:14px 18px;border-radius:50px;font-weight:bold;box-shadow:0 4px 15px rgba(0,0,0,0.3);z-index:9999;cursor:pointer;">🩺 AI Doctor</div>
+
+<div id="aiDoctorModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:10000;align-items:flex-end;justify-content:center;">
+<div style="background:white;width:100%;max-width:500px;height:85vh;border-radius:20px 20px 0 0;display:flex;flex-direction:column;overflow:hidden;">
+<div style="background:#16a34a;color:white;padding:14px;display:flex;justify-content:space-between;align-items:center;">
+<div><b>🩺 AI Doctor</b><br><small style="opacity:0.9">Daktari wa Shamba • Online</small></div>
+<button onclick="closeAIDoctor()" style="background:white;border:none;font-size:20px;width:32px;height:32px;border-radius:50%;cursor:pointer;">✕</button>
+</div>
+<div id="aiChatBox" style="flex:1;overflow-y:auto;padding:12px;background:#f0fdf4;display:flex;flex-direction:column;gap:8px;">
+<div style="background:white;padding:10px 12px;border-radius:12px;max-width:85%;box-shadow:0 1px 3px rgba(0,0,0,0.1);">Habari! 👋 Mimi ni Daktari wa Shamba. <br><br>Niambie shida ya shamba lako. Unaweza <b>kuandika</b> au <b>kuongea</b> kwa sauti!<br><br>Ex: "Mahindi majani manjano" / "Kuku wangu hula kidogo"</div>
+</div>
+<div style="padding:10px;background:white;display:flex;gap:8px;align-items:center;border-top:1px solid #eee;">
+<button id="voiceBtn" onclick="startVoice()" style="background:#dc2626;color:white;border:none;width:48px;height:48px;border-radius:50%;font-size:22px;cursor:pointer;">🎤</button>
+<input id="aiInput" placeholder="Andika hapa... Type symptom..." style="flex:1;padding:12px;border:1px solid #ddd;border-radius:25px;outline:none;" onkeypress="if(event.key==='Enter')sendAIMsg()">
+<button onclick="sendAIMsg()" style="background:#16a34a;color:white;border:none;padding:12px 16px;border-radius:25px;font-weight:bold;cursor:pointer;">Send ➤</button>
+</div>
+<div style="text-align:center;font-size:11px;color:#888;padding:4px;">🎤 Tap mic to talk • Chagua lugha: Kiswahili + English</div>
+</div>
+</div>
+
+<script>
+function openAIDoctor(){document.getElementById('aiDoctorModal').style.display='flex';}
+function closeAIDoctor(){document.getElementById('aiDoctorModal').style.display='none';if(window.speechSynthesis) speechSynthesis.cancel();}
+
+function addMsg(text, who){
+  let box=document.getElementById('aiChatBox');
+  let d=document.createElement('div');
+  if(who==='user'){ d.style.cssText='background:#16a34a;color:white;padding:10px 12px;border-radius:12px;max-width:85%;align-self:flex-end;'; }
+  else { d.style.cssText='background:white;padding:10px 12px;border-radius:12px;max-width:85%;box-shadow:0 1px 3px rgba(0,0,0,0.1);'; }
+  d.innerHTML=text;
+  box.appendChild(d); box.scrollTop=box.scrollHeight;
+}
+
+function getDiagnosis(t){
+  t=t.toLowerCase();
+  if(t.includes('manjano')||t.includes('yellow')||t.includes('mahindi')&&t.includes('majani')) return "🟡 <b>Upungufu wa Nitrogen / Nitrogen Deficiency</b><br><br><b>Dalili:</b> Majani manjano chini.<br><b>Tiba:</b> Weka mbolea ya samadi (manure) au UREA kidogo. Mwagilia maji vizuri.<br><br><b>Treatment:</b> Add manure / UREA fertilizer + water.";
+  if(t.includes('kuku')||t.includes('chicken')||t.includes('chick')) return "🐔 <b>Kuku - Check!</b><br><br>Kama kuku hula kidogo / analala: Mpe maji safi + vitamini. Weka joto. Kama anahara / kukohoa - ni homa. Mtenge na wengine mara moja.<br><br><b>Give:</b> Clean water + vitamins, keep warm, isolate if sneezing.";
+  if(t.includes('ngombe')||t.includes('cow')||t.includes('mbuzi')||t.includes('goat')) return "🐄 <b>Ng'ombe / Mbuzi</b><br><br>Kama hali kidogo / anapumua haraka: Angalia kama ana homa, minyoo. Mpe maji mengi, majani mabichi. Kama siku 2 haiponi - mwite daktari wa mifugo.<br><br><b>Give:</b> Lots of water, fresh grass. If 2 days no better, call vet.";
+  if(t.includes('madoa')||t.includes('spots')||t.includes('black')||t.includes('nyeusi')||t.includes('nyanya')||t.includes('tomato')) return "🍅 <b>Madoa Meusi / Blight</b><br><br><b>Tiba:</b> Ondoa majani yenye madoa. Usimwagilie majani, mwagilia chini tu. Nyunyiza dawa ya copper / majivu ya kuni.<br><br><b>Remove spotted leaves, water roots only, spray ash/copper.</b>";
+  if(t.includes('minyoo')||t.includes('worm')||t.includes('wadudu')||t.includes('pests')||t.includes('funza')) return "🐛 <b>Wadudu / Minyoo</b><br><br><b>Tiba:</b> Chukua majani ya mwarobaini (neem) + pilipili + sabuni kidogo, changanya na maji, nyunyiza. Kwa wanyama - dawa ya minyoo kila miezi 3.<br><br><b>Spray neem + chilli + soap water.</b>";
+  if(t.includes('habari')||t.includes('hello')||t.includes('mambo')||t.includes('hi')) return "Habari! 👋 Karibu! Niambie shida gani? Mahindi? Nyanya? Kuku? Ng'ombe? <br><br>Hello! Tell me: Maize? Tomato? Chicken? Cow?";
+  return "👨🏾‍⚕️ <b>Nimesikia:</b> '"+t+"'<br><br>Jaribu kuniambia vizuri: Ni mmea gani? Dalili gani? Ex: 'Mahindi majani manjano' au 'Kuku analala'.<br><br><b>Try:</b> Tell me crop/animal + symptom. Ex: 'Tomato black spots'";
+}
+
+function speakText(txt){
+  if(!window.speechSynthesis) return;
+  let clean=txt.replace(/<[^>]*>/g,' ').replace(/[^a-zA-Z0-9 .,!?àáâäèéêëìíîïòóôöùúûüýÿñç ]/g,' ');
+  let u=new SpeechSynthesisUtterance(clean);
+  u.lang='sw-TZ'; u.rate=0.95;
+  speechSynthesis.cancel(); speechSynthesis.speak(u);
+}
+
+function sendAIMsg(){
+  let inp=document.getElementById('aiInput');
+  let txt=inp.value.trim(); if(!txt) return;
+  addMsg(txt,'user'); inp.value='';
+  setTimeout(()=>{
+    let ans=getDiagnosis(txt);
+    addMsg(ans,'doctor');
+    speakText(ans);
+  },400);
+}
+
+function startVoice(){
+  let btn=document.getElementById('voiceBtn');
+  let SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){ alert('Voice not supported on this browser. Please use Chrome. / Tumia Chrome kwa sauti.'); return; }
+  let rec=new SR(); rec.lang='sw-TZ'; rec.interimResults=false;
+  btn.style.background='#111'; btn.innerHTML='🔴';
+  addMsg('🎤 Nasikiliza... Speak now...','doctor');
+  rec.onresult=function(e){
+    let txt=e.results[0][0].transcript;
+    btn.style.background='#dc2626'; btn.innerHTML='🎤';
+    document.getElementById('aiInput').value=txt;
+    sendAIMsg();
+  };
+  rec.onerror=function(){ btn.style.background='#dc2626'; btn.innerHTML='🎤'; addMsg('Sikukusikia vizuri, jaribu tena. / Try again.','doctor'); };
+  rec.start();
+}
+</script>
 </body>
 </html>
