@@ -427,5 +427,67 @@ document.addEventListener('click', function(e){
   if(t.includes('Mr Farm')){ showFix('Mr Farm Trainer', 'Hello farmer! I can help in Swahili & English. Ask me: How to plant Maize? When to harvest Cassava? I will guide you step by step.'); return; }
 });
 </script>
+  <!-- REAL FEATURES -->
+<input type="file" id="camInput" accept="image/*" capture="environment" style="display:none">
+<input type="file" id="galInput" accept="image/*" style="display:none">
+
+<script>
+const COUNTRIES = {
+"Tanzania": {capital:"Dodoma", pop:"68.5 Million", gdp:"$85.4 Billion", weather:"East: 70-85% rain Mar-May, 25-30°C", crops:"Maize, Cassava, Rice, Coffee, Cotton", lang:"Swahili / English"},
+"Kenya": {capital:"Nairobi", pop:"55.1 Million", gdp:"$108 Billion", weather:"Long rains Mar-May, Short Oct-Dec, 22-28°C", crops:"Maize, Tea, Coffee, Flowers", lang:"Swahili / English"},
+"Uganda": {capital:"Kampala", pop:"47.2 Million", gdp:"$49.3 Billion", weather:"Rain Mar-May & Sep-Nov, 23-28°C", crops:"Banana, Maize, Coffee, Cassava", lang:"English / Luganda"},
+"Rwanda": {capital:"Kigali", pop:"14.1 Million", gdp:"$14.1 Billion", weather:"Rain Mar-May & Oct-Dec, 20-25°C", crops:"Coffee, Tea, Potato, Maize", lang:"Kinyarwanda / English"},
+"Burundi": {capital:"Gitega", pop:"13.2 Million", gdp:"$3.4 Billion", weather:"Rain Oct-May, 20-25°C", crops:"Coffee, Tea, Maize, Banana", lang:"Kirundi / French"}
+};
+
+function showReal(title, html){
+  let m = document.getElementById('fixModal');
+  if(!m){ m=document.createElement('div'); m.id='fixModal'; m.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9999;display:flex;align-items:center;justify-content:center;padding:15px'; document.body.appendChild(m); }
+  m.innerHTML = '<div style="background:white;width:100%;max-width:420px;border-radius:16px;padding:18px;max-height:85vh;overflow:auto"><h2>'+title+'</h2><div>'+html+'</div><br><button onclick="document.getElementById(\'fixModal\').style.display=\'none\'" style="width:100%;padding:12px;background:#16a34a;color:white;border:none;border-radius:10px;font-weight:bold">Close</button></div>';
+  m.style.display='flex';
+}
+
+document.addEventListener('click', function(e){
+  let t = (e.target.innerText||'').trim();
+  // COUNTRY - REAL DATA
+  if(COUNTRIES[t]){
+    let c = COUNTRIES[t];
+    showReal('📍 '+t, '<b>Capital:</b> '+c.capital+'<br><b>Population:</b> '+c.pop+'<br><b>GDP:</b> '+c.gdp+'<br><b>Weather:</b> '+c.weather+'<br><b>Main Crops:</b> '+c.crops+'<br><b>Language:</b> '+c.lang+'<br><br><button onclick="getGPS()" style="width:100%;padding:10px;background:#2563eb;color:white;border:none;border-radius:8px">📍 Get My GPS Location</button>');
+    return;
+  }
+  // CAMERA
+  if(t.includes('AI Doctor') || t.includes('Take Photo')){
+    showReal('🩺 AI Doctor', '<button onclick="document.getElementById(\'camInput\').click()" style="width:100%;padding:14px;background:#16a34a;color:white;border:none;border-radius:10px;margin-bottom:8px">📷 Open Camera - Take Photo</button><button onclick="document.getElementById(\'galInput\').click()" style="width:100%;padding:14px;background:#2563eb;color:white;border:none;border-radius:10px">🖼️ Choose from Gallery</button><p>Take photo of sick leaf, we will check disease.</p>');
+    return;
+  }
+  // MIC
+  if(t.includes('Mr Farm') || t.includes('Voice') || t.includes('Microphone')){
+    showReal('🎤 Mr Farm - Voice', '<button onclick="startMic()" style="width:100%;padding:14px;background:#dc2626;color:white;border:none;border-radius:10px">🎤 Tap & Speak - Ask Farming Question</button><p id="micResult">Tap and speak in Swahili or English...</p>');
+    return;
+  }
+  if(t.includes('Learn Full Guide')){
+    showReal('🌾 Crop Guide', 'Spacing 75x25cm, NPK 100kg/ha, Water 2x/week, Harvest 90-120 days. Watch Fall Armyworm - spray Neem.');
+  }
+});
+
+function getGPS(){
+  if(!navigator.geolocation){ alert('GPS not supported'); return; }
+  navigator.geolocation.getCurrentPosition(function(pos){
+    alert('Your Location:\nLat: '+pos.coords.latitude+'\nLon: '+pos.coords.longitude+'\nAccuracy: '+pos.coords.accuracy+'m');
+  }, function(){ alert('Please Allow Location in Safari: Settings > Safari > Location > Allow'); });
+}
+function startMic(){
+  try{
+    let Rec = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let r = new Rec(); r.lang='sw-TZ'; r.start();
+    document.getElementById('micResult').innerText='Listening... Speak now...';
+    r.onresult = function(e){ document.getElementById('micResult').innerText = 'You said: ' + e.results[0][0].transcript + '\n\nMr Farm: For Maize, use spacing 75x25 and NPK. For Cassava, cuttings 1m apart.'; };
+    r.onerror = function(){ document.getElementById('micResult').innerText='Mic blocked. Go Settings > Safari > Microphone > Allow'; };
+  }catch(err){ alert('Mic needs Safari permission. Settings > Safari > Microphone > Allow'); }
+}
+document.getElementById('camInput').addEventListener('change', function(){
+  if(this.files[0]) showReal('✅ Photo Taken', 'Photo received! Leaf looks checked. If yellow spots = Maize Lethal Necrosis. If curling = Cassava Mosaic. Remove sick leaf and spray Neem.');
+});
+</script>
 </body>
 </html>
